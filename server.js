@@ -11,17 +11,20 @@ wss.on('connection', function(ws) {
   ws.on('message', function(message) {
     processMessage(ws, message);
   });
+  ws.on("close", function(ev) {
+    console.log('Server disconnected, reason: ' + ev.code);
+  })
 });
 
  function processMessage(ws,message) {
   console.log('Received from client: %s', message);
   const json = JSON.parse(message)
-  json.headers.reqStatus = 'success'
+  if (json.headers) json.headers.reqStatus = 'success'
   routeMessage(ws,json);
 }
 
 function routeMessage(ws, json) {
-  const method = json.headers.reqName
+  const method = json.headers?.reqName ?? ''
   switch (method) {
     case '/player/auth':
       json.body = authResponse()
