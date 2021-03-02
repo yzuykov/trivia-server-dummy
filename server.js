@@ -6,7 +6,7 @@ const randomToken = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
-const wss = new WebSocketServer({port: 3000});
+const wss = new WebSocketServer({port: process.env.PORT || 3000});
 wss.on('connection', function(ws) {
   ws.on('message', function(message) {
     processMessage(ws, message);
