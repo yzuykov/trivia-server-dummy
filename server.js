@@ -1,10 +1,8 @@
 console.log("Server started");
 const WebSocketServer = require('ws').Server;
-
-
-const randomToken = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
+const player = require('./player')
+const breweries = require('./breweries')
+const game = require('./game')
 
 const wss = new WebSocketServer({port: process.env.PORT || 3000});
 wss.on('connection', function(ws) {
@@ -16,7 +14,7 @@ wss.on('connection', function(ws) {
   })
 });
 
- function processMessage(ws,message) {
+function processMessage(ws,message) {
   console.log('Received from client: %s', message);
   const json = JSON.parse(message)
   if (json.headers) json.headers.reqStatus = 'success'
@@ -27,39 +25,24 @@ function routeMessage(ws, json) {
   const method = json.headers?.reqName ?? ''
   switch (method) {
     case '/player/auth':
-      json.body = authResponse()
+    case '/player/register':
+      json.body = player.authResponse()
+      break
+    case '/player/authOT':
+      const name = json.body?.player?.name
+      json.body = player.authGuestResponse(name)
+      break
+    case '/player/getGuestList':
+      json.body = player.getGuestListResponse()
       break
     case '/brewery/getList':
-      json.body = getBreweryListResponse()
+      json.body = breweries.getBreweryListResponse()
+      break
+    case '/game/getTime':
+      json.body = game.getTime()
       break
   }
   const response = JSON.stringify(json)
   console.log('Send to client: %s', response);
   ws.send(response)
 }
-
-const authResponse = () => {
-  return {'player': {'id': 123, 'token': randomToken()}}
-}
-
-const getBreweryListResponse = () => {
-  return {
-    'breweries': [
-        {
-            "id": 777,
-            "name": "Пивбар #1",
-            "address": "Москва, Лужнецкая набережная, 1",
-            "coordinates": "55.755831,37.617673",
-            "tz": "UTC+3:00"
-        },
-        {
-            "id": 123,
-            "name": "Пивград",
-            "address": "Санкт-Петербург, Невский проспект, 45",
-            "coordinates": "59.930534,30.348926",
-            "tz": "UTC+3:00"
-        }
-    ]
-  }
-}
-

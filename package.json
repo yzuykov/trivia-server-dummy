@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dummy-socket": "node server.js"
+    "dummy-socket": "node server.js",
+    "deploy": "git push heroku master"
   },
   "dependencies": {
     "ws": "^7.4.3"
