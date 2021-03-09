@@ -1,4 +1,4 @@
-module.exports = {
+const breweries = {
   getBreweryListResponse: () => {
     return {
       'breweries': [
@@ -20,3 +20,5 @@ module.exports = {
     }
   }
 }
+
+export default breweries;
