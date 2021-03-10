@@ -2,8 +2,9 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
+    "clean-start": "npm run build && npm start",
     "deploy": "git push heroku master",
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc",
     "watch-node": "nodemon dist/server.js",
     "watch-ts": "tsc -w"
   },

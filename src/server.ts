@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 import player from './player';
 import breweries from './breweries';
 import game from './game';
+import { SocketMessage } from './types';
 
 
 class TriviaDummyServer {
@@ -19,17 +20,20 @@ class TriviaDummyServer {
 
   processMessage(ws: WebSocket, message: string) {
     console.log('Received from client: %s', message);
-    const json = JSON.parse(message)
-    if (json.headers) json.headers.reqStatus = 'success'
+    const json: SocketMessage = JSON.parse(message)
+    if (json.headers) {
+      json.headers.status = 'success'
+      json.headers.refId = json.headers.id
+    }
     this.routeMessage(ws,json);
   }
   
-  routeMessage(ws: WebSocket, json: any) {
-    const method = json.headers?.reqName ?? ''
+  routeMessage(ws: WebSocket, json: SocketMessage) {
+    const method = json.headers?.method ?? ''
     switch (method) {
       case '/player/auth':
       case '/player/register':
-        json.body = player.authResponse()
+        player.authResponse(json)
         break
       case '/player/authOT':
         const name = json.body?.player?.name
@@ -38,11 +42,21 @@ class TriviaDummyServer {
       case '/player/getGuestList':
         json.body = player.getGuestListResponse()
         break
+      case '/player/getHistory':
+        json.body = player.getGameHistoryResponse()
+        break
+      case '/player/getRating':
+        json.body = player.getRaingResponse()
+        break  
       case '/brewery/getList':
         json.body = breweries.getBreweryListResponse()
         break
       case '/game/getTime':
+      case '/player/regForGame':
         json.body = game.getTime()
+        break
+      case '/game/getSettings':
+        json.body = game.getSettings()
         break
     }
     const response = JSON.stringify(json)
