@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { SocketMessage } from "./types";
 
 const randomToken = () => {
@@ -5,15 +6,14 @@ const randomToken = () => {
 }
 
 const player = {
-  authResponse: (json: SocketMessage) => {
-    const method = json.headers?.method ?? ''
-    const nick = json.body?.player?.nick
-    const pass = json.body?.player?.pass
-    if (method==="/player/register" || (nick==='player' && pass==='player')) {
-      json.body = {'player': {'id': 123, 'token': randomToken()}}
+  authResponse: (req: Request, res: Response) => {
+    console.log(req.body)
+    const nick = req.body?.player?.nick
+    const pass = req.body?.player?.pass
+    if (nick==='player' && pass==='player') {
+      res.json({'player': {'id': 123, 'token': randomToken()}})
     } else {
-      json.headers.status = 'error'
-      json.error = {'code': 203, 'description': 'auth failed'}
+      res.status(400).json({'code': 203, 'description': 'auth failed'})
     }
   },
   authGuestResponse: (name: string) => {
@@ -24,6 +24,16 @@ const player = {
   },
   getRaingResponse: () => {
     return {'rating': {'points': 10232, 'rank': 1, 'active': 0}}
+  },
+  getInfo: () => {
+    return {
+      "player":{
+         "nick":"Хитрый мозг",
+         "name":"Иван",
+         "surname":"Сергеев",
+         "email":"bigbrain@gmail.com"
+      }
+   }
   },
   getGameHistoryResponse: () => {
     return {"games": [
