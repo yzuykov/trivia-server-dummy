@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import WebSocket from 'ws';
 import { SocketMessage } from './types';
+import {questions} from './questions';
 
 const game = {
   getTime: () => {
@@ -38,6 +39,7 @@ const game = {
   },
   sendQuestion: (client: WebSocket, roundNum?: number, questionNum?: number) => {
     const now = DateTime.now();
+    const keyQuestion = 0 + (questionNum || 1)
     const json: SocketMessage = {
       headers:{
          method:"/game/sendQuestion",
@@ -47,40 +49,7 @@ const game = {
          "game":{
             "id":10,
             "round": roundNum || 1,
-            "question":{
-               "id":425,
-               "num": questionNum || 1,
-               "text":"Какой ответ на главный вопрос Жизни, Вселенной и Всего остального?",
-               "answers":[
-                  {
-                     "text":"Свобода, равенство, братство!",
-                     "id":2122
-                  },
-                  {
-                     "text":"Veni, vidi, vici",
-                     "id":2125,
-                     "isRight":1
-                  },
-                  {
-                     "text":"Диоксид водорода",
-                     "id":2121
-                  },
-                  {
-                     "text":"42",
-                     "id":2124
-                  },
-                  {
-                     "text":"Колодин - пушка страшная!",
-                     "id":2123
-                  }
-               ],
-               "hints":[
-                  "Черданцев тут ни при чём",
-                  "Ответ был дан в книге 'Автостопом по Галактике'",
-                  "Ответ был дан ИИ Deep Thought"
-               ],
-               "fact":"Джо Байден - 46й Президент США"
-            }
+            "question":questions.get(keyQuestion)
          },
          "time":{
             "server": now.toISOTime().split('.')[0],
@@ -99,17 +68,50 @@ const game = {
          id:12403518
       },
       body:{
-         "content":{
-            type:"video",
-            url:"https://zabbix.wsoft.ru/distrs/moto_1920.mp4",
-         }
-      
+         "content":[
+            {
+              type:"video",
+              url:"https://zabbix.wsoft.ru/distrs/moto_1920.mp4",
+              duration: 20
+            },
+            {
+              type:"image",
+              url:"https://bulma.io/images/placeholders/256x256.png",
+              duration: 20
+            },
+            {
+              type:"text",
+              text:"Привет, кероснищики!",
+              duration: 20
+            }
+          ]
       }
    }   
    const request = JSON.stringify(json);
    console.log('Send to client request: %s', request);
    client.send(request)
+  },
+  sendContentPlasma: () => {
+    return {
+        "content":[
+           {
+             type:"video",
+             url:"https://zabbix.wsoft.ru/distrs/moto_1920.mp4",
+             duration: 20
+           },
+           {
+             type:"image",
+             url:"https://bulma.io/images/placeholders/640x360.png",
+             duration: 20
+           },
+           {
+             type:"text",
+             text:"Привет, кероснищики!",
+             duration: 20
+           }
+        ]
   }
+ }
 }
 
 export default game;

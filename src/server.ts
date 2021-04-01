@@ -56,6 +56,7 @@ class TriviaDummyServer {
     this.app.use(express.json());
     this.app.use(cors())
     this.app.get("/brewery/getList", (req,res) => res.json(breweries.getBreweryListResponse()))
+    this.app.get("/brewery/registerDisplay", (req,res) => res.json(game.sendContentPlasma()))
     this.app.get("/player/getGuestList", (req,res) => res.json(player.getGuestListResponse()))
     this.app.post("/player/register", (req,res) => player.authResponse(req,res))
     this.app.post("/player/auth", (req,res) => player.authResponse(req,res))
