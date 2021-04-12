@@ -4,7 +4,7 @@
     "start": "node dist/server.js",
     "clean-start": "npm run build && npm start",
     "deploy": "git push heroku master",
-    "build": "rm -rf ./dist && tsc",
+    "build": "rm -rf ./dist && tsc && cp -R src/public dist",
     "watch-node": "nodemon dist/server.js",
     "watch-ts": "tsc -w"
   },

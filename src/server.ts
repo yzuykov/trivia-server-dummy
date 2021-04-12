@@ -31,7 +31,10 @@ class TriviaDummyServer {
     this.server = http.createServer(this.app);
     this.wss = new WebSocket.Server({server: this.server});
     this.wss.on('connection', (ws: WebSocket) => {
-      ws.on('message', (message: string) => ws.send(message));
+      ws.on('message', (message: string) => {
+        if (!JSON.parse(message).header?.method?.includes('Response'))
+          ws.send(message)
+      });
       ws.on('close', (code: number, reason: string) => console.log(`Clent disconnected - code: ${code}, reason: ${reason}`))
     });
     schedule('0 0,30 11-22 * * *', () => {
@@ -53,8 +56,18 @@ class TriviaDummyServer {
   }
 
   routeMessages() {
+    const _this = this;
     this.app.use(express.json());
     this.app.use(cors())
+    this.app.get('/', function(req, res) {
+      res.sendFile(__dirname + '/public/index.html');
+    });
+    this.app.post('/broadcast', function(req, res) {
+      const stringBody = JSON.stringify(req.body);
+      console.log(stringBody)
+      _this.wss.clients.forEach((client: WebSocket) => {client.send(stringBody)})
+      res.status(200).send();
+    });
     this.app.get("/brewery/getList", (req,res) => res.json(breweries.getBreweryListResponse()))
     this.app.get("/brewery/registerDisplay", (req,res) => res.json(game.sendContentPlasma()))
     this.app.get("/player/getGuestList", (req,res) => res.json(player.getGuestListResponse()))
@@ -73,6 +86,7 @@ class TriviaDummyServer {
     this.app.post("/player/unreg", (req,res) => res.status(204).send())
     this.app.post("/player/disqualify", (req,res) => res.status(204).send())
     this.app.post("/game/sendAnswer", (req,res) => res.json(game.getLeaderboard()))
+    this.app.get("/game/getCurrentRating", (req,res) => res.json(game.getLeaderboard()))
     this.app.get("/game/getTime", (req,res) => res.json(game.getTime()))
     this.app.get("/game/getSettings", (req,res) => res.json(game.getSettings()))
   }

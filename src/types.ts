@@ -14,7 +14,7 @@ export interface SocketError {
 }
 
 export interface SocketMessage {
-  headers: SocketHeader;
+  header: SocketHeader;
   body?: any;
   error?: SocketError;
 }

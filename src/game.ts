@@ -41,7 +41,7 @@ const game = {
     const now = DateTime.now();
     const keyQuestion = 0 + (questionNum || 1)
     const json: SocketMessage = {
-      headers:{
+      header:{
          method:"/game/sendQuestion",
          id:12403518
       },
@@ -63,7 +63,7 @@ const game = {
   },
   sendContent: (client: WebSocket) => {
     const json: SocketMessage = {
-      headers:{
+      header:{
          method:"/game/sendContent",
          id:12403518
       },

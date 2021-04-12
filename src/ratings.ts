@@ -4,7 +4,7 @@ import { SocketMessage } from './types';
 const ratings = {
   sendRatingsOne: (client: WebSocket) => {
     const json: SocketMessage = {
-      headers:{
+      header:{
         method:"/game/sendRatingsOne",
         id:12403518
       },
@@ -55,7 +55,7 @@ const ratings = {
   },
   sendRatingsTwo: (client: WebSocket) => {
     const json: SocketMessage = {
-      headers:{
+      header:{
         method:"/game/sendRatingsTwo",
         id:12403518
       },
