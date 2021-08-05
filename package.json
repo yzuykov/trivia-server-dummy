@@ -14,7 +14,7 @@
     "express": "^4.17.1",
     "luxon": "^1.26.0",
     "node-cron": "^3.0.0",
-    "ws": "^7.4.3"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.10",
