@@ -62,15 +62,15 @@
       }
 
       const submit = () => {
-        this.isLoading.value = true
+        isLoading.value = true
         fetch("/broadcast", getRequestOptions())
             .then(() => alert('Успешно'))
             .catch(e => alert('Произошла ошибка ' + e))
-            .finally(() => this.isLoading.value = false);
+            .finally(() => isLoading.value = false);
       }
       
       const clearFields = () => {
-        this.jsonData.value = '';
+        jsonData.value = '';
       }
 
       return {
