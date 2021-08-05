@@ -4,8 +4,8 @@
     <title>Broadcast message to WebSocket clients</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
-    <script src="https://vuejs.org/js/vue.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://unpkg.com/vue@next"></script>
     <style>
       .background-wings {
         background-image: linear-gradient(black,#660000);
@@ -46,33 +46,40 @@
   </body>
 </html>
 <script type="text/javascript">
-  new Vue ({
-    el: "#app",
-    data: () => {
-      return {
-        isLoading: false,
-        jsonData: '',
-      }
-    },
-    methods:{
-      submit() {
-        this.isLoading = true
-        fetch("/broadcast", this.getRequestOptions())
-            .then(() => alert('Успешно'))
-            .catch(e => alert('Произошла ошибка ' + e))
-            .finally(() => this.isLoading = false);
-      },
-      getRequestOptions() {
+  const {  ref, createApp } = Vue
+  
+  createApp({
+    setup() {
+      const isLoading = ref(false)
+      const jsonData = ref('')
+     
+      const getRequestOptions = () => {
         return {
           method: "POST",
           headers: { "Content-Type": "application/json"},
-          body: this.jsonData
+          body: jsonData.value
         }
-      },
-      clearFields() {
-        this.jsonData = '';
-      },
+      }
+
+      const submit = () => {
+        isLoading.value = true
+        fetch("/broadcast", getRequestOptions())
+            .then(() => alert('Успешно'))
+            .catch(e => alert('Произошла ошибка ' + e))
+            .finally(() => isLoading.value = false);
+      }
+      
+      const clearFields = () => {
+        jsonData.value = '';
+      }
+
+      return {
+        isLoading, 
+        jsonData,
+        submit,
+        clearFields
+      }
     }
-  });
+  }).mount('#app')
 </script>
 
